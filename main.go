@@ -89,9 +89,21 @@ func main() {
 			log.Fatal(err)
 		}
 
+		reqDay, ok := r.URL.Query()["day"]
+		sqlStatement := ""
+
+		if len(reqDay) > 0 && ok {
+			searchDay := strings.Trim(reqDay[0], "\"")
+			log.Printf("We got a value! %v", searchDay)
+			sqlStatement = "SELECT Timestamp, OutsideTemperature, OutsideHumidity, CarTemperature, CarHumidity from Reading WHERE Timestamp like '" + searchDay + "%'"
+		} else {
+			log.Printf("We got nothin")
+			sqlStatement = "SELECT Timestamp, OutsideTemperature, OutsideHumidity, CarTemperature, CarHumidity from Reading"
+		}
+
 		defer db.Close()
 
-		rows, err := db.Query("SELECT Timestamp, OutsideTemperature, OutsideHumidity, CarTemperature, CarHumidity from Reading")
+		rows, err := db.Query(sqlStatement)
 		if err != nil {
 			log.Fatal(err)
 		}
