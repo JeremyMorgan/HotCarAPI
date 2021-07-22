@@ -95,10 +95,10 @@ func main() {
 		if len(reqDay) > 0 && ok {
 			searchDay := strings.Trim(reqDay[0], "\"")
 			log.Printf("We got a value! %v", searchDay)
-			sqlStatement = "SELECT Timestamp, OutsideTemperature, OutsideHumidity, CarTemperature, CarHumidity from Reading WHERE Timestamp like '" + searchDay + "%'"
+			sqlStatement = "SELECT Timestamp, OutsideTemperatureFahrenheit, OutsideTemperatureCelcius, OutsideHumidity, CarTemperatureFahrenheit, CarTemperatureCelcius, CarHumidity from Reading WHERE Timestamp like '" + searchDay + "%'"
 		} else {
 			log.Printf("We got nothin")
-			sqlStatement = "SELECT Timestamp, OutsideTemperature, OutsideHumidity, CarTemperature, CarHumidity from Reading"
+			sqlStatement = "SELECT Timestamp, OutsideTemperatureFahrenheit, OutsideTemperatureCelcius, OutsideHumidity, CarTemperatureFahrenheit, CarTemperatureCelcius, CarHumidity from Reading"
 		}
 
 		defer db.Close()
@@ -112,7 +112,7 @@ func main() {
 
 		for rows.Next() {
 			reading := models.Reading{}
-			err := rows.Scan(&reading.TimeStamp, &reading.OutsideTemperature, &reading.OutsideHumidity, &reading.CarTemperature, &reading.CarHumidity)
+			err := rows.Scan(&reading.TimeStamp, &reading.OutsideTemperatureFahrenheit, &reading.OutsideTemperatureCelcius, &reading.OutsideHumidity, &reading.CarTemperatureFahrenheit, &reading.CarTemperatureCelcius, &reading.CarHumidity)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -187,7 +187,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "80"
+		port = "8080"
 	}
 
 	for _, encodedRoute := range strings.Split(os.Getenv("ROUTES"), ",") {
